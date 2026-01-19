@@ -1,4 +1,4 @@
-import React, {useReducer,  useMemo } from "react";
+import React, {useReducer, useCallback, useMemo } from "react";
 import SelectField from "./components/Select";
 import listOfGenreOption from "./store/genre.json";
 import listOfMoodOption from "./store/mood.json";
@@ -44,6 +44,10 @@ switch (action.type){
       ...state, loading: false, error: action.payload
     };
 
+    case "ADD_LOCAL_RECOMMENDATION":
+  return { ...state, aiResponses: [...state.aiResponses, action.payload] 
+  };
+
     default:
       return state;
 }
@@ -57,13 +61,13 @@ export default function App() {
   const availableMoodBasedOnGenre = useMemo( () => {
     return listOfMoodOption [genre] || [];  }, [genre])
 
-    // callBack statrs here
-//   const getRecommendation = useCallback(() => {
-//   setAiResponses((prev) => [
-//     ...prev,
-//     `Genre: ${genre}, Mood: ${mood}, Level: ${level}`,
-//   ]);
-// }, [genre, mood, level]);
+
+  const getRecommendation = useCallback(() => {
+    if (!genre || !mood || !level) return;
+
+    const recommendation = `Genre: ${genre}, Mood: ${mood}, Level: ${level}`;
+    dispatch({ type: "ADD_LOCAL_RECOMMENDATION", payload: recommendation });
+  }, [genre, mood, level]);
 
     
 // fetch recommendation starts here
@@ -166,4 +170,3 @@ return (
 }
 // The end of App()
 
-  
